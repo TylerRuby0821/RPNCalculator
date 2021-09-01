@@ -1,6 +1,8 @@
-from os import system, name           # Importing from os for out clear function
+from os import pread, system, name           # Importing from os for out clear function
 import operator                       # Importing operator madule for later use
 import re
+import sys
+from sre_constants import CATEGORY_LOC_NOT_WORD
 
 def char_check(i):
   return re.search(r'[a-zA-Z]$', i)
@@ -32,26 +34,30 @@ print("Enter q to exit the program.")
 print("Happy Calculating!")
 
 stack = []                          # Initializing a Stack
-while True:                         # While loop, allowing exit of the calculator when q is the input and keeping our session from closing without user input
+# While loop, allowing exit of the calculator when q is the input and keeping our session from closing without user input
+while True:
+  # Opening up an input for the user and assigning it to our variable
   user_input = input('> ')
   if char_check(user_input):
-              # Opening up an input for the user and assigning it to our variable
-    if user_input == "q":             # If the user inputs "q" the program should close
-      print("Calculations Complete!") # Brief message before closing for more dynamic user interaction
-      break                     # Closes the program
-    else:
-      print("Error: Non-Used Character input, Please enter real numbers, operators or q to exit.")
-      
+      if user_input == "q":             # If the user inputs "q" the program should close
+        print("Calculations Complete!") # Brief message before closing for more dynamic user interaction
+        break
+      if user_input == "c":
+        stack = []
+        print("Cleared")
+        continue                    # Closes the program
   split = user_input.split(' ')     # Spliting the user input on spaces and assigning it to a variable
   for char in split:                # Iterate through the split input
     if char in operations:          # Checking if the current character is an operator, if so we pop the first two items off the stack, save them to
       stack.append(operations[char](float(stack.pop(-2)), float(stack.pop())))
-      print("After Operation",stack)
-    else:                           # If the char is not an operator, we simply append it to the stack.
-      stack.append(float(char))
-      print(stack)
-  if len(stack) == 1:
-    print(stack[-1])                # Printing the ouput
-
+      # print("After Operation",stack)
+    else:
+      try:                           # If the char is not an operator, we simply append it to the stack.
+        stack.append(float(char))
+      except ValueError:
+        print("Error: Non-Used Character input, Please enter real numbers, Valid operators(+, - , /, *) or q to exit.")
+        pass
+    if len(stack) >= 1:
+      print(stack[-1])              # Printing the ouput
   # else:
   #   print("Error: Input Not Formated Correctly")
