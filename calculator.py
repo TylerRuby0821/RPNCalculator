@@ -1,19 +1,21 @@
-from os import pread, system, name           # Importing from os for out clear function
+from os import system, name           # Importing from os for out clear function
 import operator                       # Importing operator madule for later use
-import re
-import sys
-from sre_constants import CATEGORY_LOC_NOT_WORD
+import re                             # Imported for Regex Checker
 
+
+# Regex character check, to look for letters not used for commands
 def char_check(i):
   return re.search(r'[a-zA-Z]$', i)
 
-def clear():                          # Declaring a basic clear function to declutter the command line and terminal upon launch
+# Declaring a basic clear function to declutter the command line and terminal upon launch
+def clear():
   if name == 'nt':
     _= system('cls')
   else:
     _= system('clear')
 
-operations = {                        # Defining an operations dictionary with the user of the operator module for later
+# Defining an operations dictionary with the user of the operator module for later
+operations = {
   "+" : operator.add,
   "-" : operator.sub,
   "/" : operator.truediv,
@@ -31,9 +33,10 @@ print("With an RPN calculator, please enter all values first, followed by the op
 print("Example:\nInput: 8 2 +\nOutput: 10\n")
 print("Enter c to start a new calculation.")
 print("Enter q to exit the program.")
-print("Happy Calculating!")
+print("Happy Calculating!\n")
 
-stack = []                          # Initializing a Stack
+# Initializing a Stack
+stack = []
 # While loop, allowing exit of the calculator when q is the input and keeping our session from closing without user input
 while True:
   # Opening up an input for the user and assigning it to our variable
@@ -44,11 +47,14 @@ while True:
         break
       if user_input == "c":
         stack = []
-        print("Cleared")
+        print("Cleared\n")
         continue                    # Closes the program
   split = user_input.split(' ')     # Spliting the user input on spaces and assigning it to a variable
   for char in split:                # Iterate through the split input
     if char in operations:          # Checking if the current character is an operator, if so we pop the first two items off the stack, save them to
+      if len(stack) < 2:
+        print("Error: Not enough values to perform an operation.")
+        continue
       stack.append(operations[char](float(stack.pop(-2)), float(stack.pop())))
       # print("After Operation",stack)
     else:
@@ -56,8 +62,8 @@ while True:
         stack.append(float(char))
       except ValueError:
         print("Error: Non-Used Character input, Please enter real numbers, Valid operators(+, - , /, *) or q to exit.")
-        pass
-    if len(stack) >= 1:
-      print(stack[-1])              # Printing the ouput
+        continue
+  if len(stack) >= 1:
+    print(stack[-1])              # Printing the ouput
   # else:
   #   print("Error: Input Not Formated Correctly")
